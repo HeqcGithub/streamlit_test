@@ -23,7 +23,7 @@ def background():
     set_background_image(image_url)
     
     # Streamlit 应用内容
-    st.title('Welcome to my Streamlit app with a background image!')
+    st.title('Welcome !')
     # ... 其他内容 ...
 
 background()

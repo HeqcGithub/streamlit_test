@@ -5,10 +5,9 @@
 # 自定义侧边栏的CSS样式
 def sidebar_style():
     st.markdown("""
-    <style>
-    }           
+    <style>       
     [data-testid="stSidebar"] {
-        background-color: #404040;
+        background-color: #ffebcd;
         color: white;
     }
     [data-testid="stSidebar"] .css-1q8dd3e {
@@ -38,7 +37,10 @@ def sidebar_style():
     """, unsafe_allow_html=True)
 
 # 应用自定义侧边栏样式
+st.sidebar.title("Navigation Menu")
+pg = st.navigation([st.Page("HomePage.py"), st.Page("ERROR_Ansys.py")])
+ 
 sidebar_style()
-pg = st.navigation([st.Page("page_1.py"), st.Page("page_2.py")])
+
 pg.run()
 
