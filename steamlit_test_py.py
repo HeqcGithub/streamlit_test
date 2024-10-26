@@ -5,8 +5,7 @@
 # 自定义侧边栏的CSS样式
 def sidebar_style():
     st.markdown("""
-    <style>
-    }           
+    <style>          
     [data-testid="stSidebar"] {
         background-color: #404040;
         color: white;
