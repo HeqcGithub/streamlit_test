@@ -37,7 +37,6 @@ def sidebar_style():
     """, unsafe_allow_html=True)
 
 # 应用自定义侧边栏样式
-st.sidebar.title("Navigation Menu")
 pg = st.navigation([st.Page("HomePage.py"), st.Page("ERROR_Ansys.py")])
  
 sidebar_style()
