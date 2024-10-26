@@ -37,9 +37,10 @@ def sidebar_style():
     """, unsafe_allow_html=True)
 
 # 应用自定义侧边栏样式
-pg = st.navigation([st.Page("page_1.py"), st.Page("page_2.py")])
- 
 sidebar_style()
+pg = st.navigation([st.Page("page_1.py"), st.Page("page_2.py")])
+pg.run() 
 
-pg.run()
+
+
 
