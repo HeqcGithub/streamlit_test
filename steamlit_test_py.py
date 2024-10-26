@@ -7,7 +7,7 @@ def sidebar_style():
     st.markdown("""
     <style>          
     [data-testid="stSidebar"] {
-        background-color: #404040;
+        background-color: #ffebcd;
         color: white;
     }
     [data-testid="stSidebar"] .css-1q8dd3e {
@@ -38,6 +38,7 @@ def sidebar_style():
 
 # 应用自定义侧边栏样式
 sidebar_style()
+st.sidebar.title("Navigation Menu")
 pg = st.navigation([st.Page("page_1.py"), st.Page("page_2.py")])
 pg.run()
 
