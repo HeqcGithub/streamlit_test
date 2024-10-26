@@ -39,7 +39,5 @@ def sidebar_style():
 # 应用自定义侧边栏样式
 pg = st.navigation([st.Page("HomePage.py"), st.Page("ERROR_Ansys.py")])
  
-sidebar_style()
-
 pg.run()
 
