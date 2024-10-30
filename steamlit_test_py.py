@@ -1,17 +1,18 @@
 ﻿import streamlit as st
 
 # 创建文件上传组件
+st.set_page_config(layout="wide")
 
 # 自定义侧边栏的CSS样式
 def sidebar_style():
     st.markdown("""
     <style>       
     [data-testid="stSidebar"] {
-        background-color: #ffebcd;
+        background-color: #17202a;
         color: white;
     }
     [data-testid="stSidebar"] .css-1q8dd3e {
-        background-color: #404040;
+        background-color: #17202a;
         color: white;
     }
     [data-testid="stSidebar"] a {
@@ -38,7 +39,7 @@ def sidebar_style():
 
 # 应用自定义侧边栏样式
 sidebar_style()
-pg = st.navigation([st.Page("page_1.py"), st.Page("page_2.py")])
+pg = st.navigation([st.Page("HOME.py"), st.Page("Significant Error Analysis.py")])
 pg.run() 
 
 
