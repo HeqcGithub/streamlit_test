@@ -132,13 +132,14 @@ def plot_function(data, outliers,ax):
     ax.clear()
     data_index = np.arange(len(data))
     ax.scatter(data_index,data,s=50)
-    if not outliers:
-        outlier_indices = []
+    outlier_indices = []
+    if outliers:
         mid_data = data.copy()
         for outlier in outliers:
             indices = np.where(mid_data == outlier)[0]
             outlier_indices.append(indices[0])
             mid_data[indices[0]] = np.nan   #将使用过的索引置为nan
+    print(outlier_indices,outliers)
     ax.scatter(outlier_indices, outliers, color='red', marker='x',s=100)
     ax.set_xlabel('number',fontsize=15)
     ax.set_ylabel('value',fontsize=15)
