@@ -39,7 +39,7 @@ def sidebar_style():
 
 # 应用自定义侧边栏样式
 sidebar_style()
-pg = st.navigation([st.Page("HOME.py"), st.Page("Significant Error Analysis.py"),st.Page("Least Squares Method.py")])
+pg = st.navigation([st.Page("HOME.py"), st.Page("Significant Error Analysis.py"),st.Page("Least_Squares_Method.py")])
 pg.run() 
 
 
