@@ -139,7 +139,7 @@ def plot_function(data, outliers,ax):
             indices = np.where(mid_data == outlier)[0]
             outlier_indices.append(indices[0])
             mid_data[indices[0]] = np.nan   #将使用过的索引置为nan
-        ax.scatter(outlier_indices, outliers, color='red', marker='x',s=100)
+    ax.scatter(outlier_indices, outliers, color='red', marker='x',s=100)
     ax.set_xlabel('number',fontsize=15)
     ax.set_ylabel('value',fontsize=15)
 
