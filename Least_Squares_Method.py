@@ -1,65 +1,86 @@
 import streamlit as st
+import pandas as pd
 import numpy as np
-
+from scipy.stats import linregress
 # Streamlit页面标题
-st.title('最小二乘法计算')
+st.title('最小二乘法处理')
 
-# 输入数据的表单
-st.write('请输入数据以进行线性回归分析：')
+# 设置表格的列数
+num_columns = st.number_input('请输入表格的列数（至少为2）:', min_value=2, value=2, step=1)
 
-# 获取用户输入的数据点数量
-rows = st.number_input('请输入数据点的数量:', min_value=2, value=2)
-def main():
-    # 使用session_state来存储输入数据
-    if 'X_data' not in st.session_state:
-        st.session_state['X_data'] = []
-    if 'y_data' not in st.session_state:
-        st.session_state['y_data'] = []
+# 设置表格的行数
+num_rows = st.number_input('请输入表格的行数（至少为1）:', min_value=1, value=1, step=1)
 
-    # 输入数据点的表单
-    for i in range(rows):
-        x_values = st.text_input(f'输入第{i+1}个数据点的自变量值（以逗号分隔）:', key=f'x_values_{i}')
-        y_value = st.number_input(f'输入第{i+1}个数据点的因变量值:', format="%f", key=f'y_value_{i}')
+# Create column names for DataFrame
+columns = ['Y'] + [f'X{i}' for i in range(1, num_columns)]
+# Create row names
+row_names = [f'row{i+1}' for i in range(num_rows)]
 
-    # 清除数据按钮
-    if st.button('清除数据'):
-        st.session_state['X_data'] = []
-        st.session_state['y_data'] = []
+# Check if saved data exists in session state
+if 'saved_data' in st.session_state:
+    saved_data = st.session_state['saved_data']
+    # Adjust DataFrame dimensions if row or column count has changed
+    if saved_data.shape != (num_rows, num_columns):
+        # Create a new DataFrame with the updated dimensions
+        new_df = pd.DataFrame(index=row_names, columns=columns)
+        # Copy data from the saved DataFrame to the new DataFrame as much as possible
+        min_rows = min(saved_data.shape[0], num_rows)
+        min_cols = min(saved_data.shape[1], num_columns)
+        new_df.iloc[:min_rows, :min_cols] = saved_data.iloc[:min_rows, :min_cols]
+        # Update session state with the adjusted DataFrame
+        st.session_state['saved_data'] = new_df
+else:
+    # Initialize session state data if it doesn't exist
+    st.session_state['saved_data'] = pd.DataFrame(index=row_names, columns=columns)
 
-    # 当用户点击按钮时，处理输入数据并计算最小二乘解
-    if st.button('计算最小二乘解'):
-        for i in range(rows):
-            x_values = st.session_state.get(f'x_values_{i}', '')
-            y_value = st.session_state.get(f'y_value_{i}', None)
-            
-            # 将输入的值存储到session_state中
+# Display and edit the DataFrame
+st.write('Please enter data:')
+edited_df = st.data_editor(st.session_state['saved_data'], key='data_editor')
+
+# Update session state with the edited data
+if st.button('保存数据'):
+    st.session_state['saved_data'] = edited_df
+    st.success('Data has been saved!')
+
+
+
+def LSM(edited_df):
+    # 如果用户提交了数据
+    if edited_df is not None:
+        # 确保数据不为空
+        if not edited_df.empty:
             try:
-                x_values_list = [float(v) for v in x_values.split(',')]  # 添加截距项
-                st.session_state['X_data'].append(x_values_list)
-                st.session_state['y_data'].append(y_value)
-            except ValueError:
-                # 如果转换失败，显示错误信息
-                st.error(f'在第{i+1}个数据点的自变量值输入有误，请确保输入的是逗号分隔的数字。')
-                st.session_state['X_data'] = []  # 清除错误数据
-                st.session_state['y_data'] = []
-                break  # 退出循环
-
-        # 确保有足够的数据点进行计算
-        if len(st.session_state['X_data']) >= 2 and len(st.session_state['y_data']) >= 2:
-            # 将输入数据转换为NumPy数组
-            X = np.array(st.session_state['X_data'])
-            y = np.array(st.session_state['y_data'])
-            print(X,y)
-            # 使用NumPy的linalg.lstsq方法求解最小二乘问题
-            beta, residuals, rank, s = np.linalg.lstsq(X, y, rcond=None)
-            
-            # 显示结果
-            st.write('计算结果：')
-            st.write('参数向量 beta:', beta)
-            st.write('残差向量 residuals:', residuals)
-            st.write('矩阵X的秩 rank:', rank)
-            st.write('奇异值 s:', s)
+                # 将数据转换为numpy数组
+                data = edited_df.values.astype(float)  # 确保所有数据都是浮点数类型
+                
+                # 分离因变量和自变量
+                y = data[:, 0]
+                X = data[:, 1:]
+                print(y)
+                print(X)
+                # 执行最小二乘法
+                beta, residuals, rank, s = np.linalg.lstsq(X, y, rcond=None)
+                
+                # 显示结果
+                # st.write('计算结果：')
+                # st.write('参数向量 beta:', beta)
+                # st.write('残差向量 residuals:', residuals)
+                # st.write('矩阵X的秩 rank:', rank)
+                # st.write('奇异值 s:', s)
+                results_df = pd.DataFrame({
+                    'Parameter': ['参数向量', '残差', '矩阵的秩', 's'],
+                    'Value': [beta, residuals, rank, s]
+                })
+                st.write('计算结果：')
+                st.write(results_df)
+            except ValueError as e:
+                st.error('数据包含非数值类型，请确保所有输入都是数值。')
+                st.write(e)
         else:
-            st.error('没有足够的数据点进行最小二乘法计算。')
+            st.write('请输入有效的数据。')
+    else:
+        st.write('请输入数据。')
 
-main()
+
+if st.button('运行最小二乘法'):
+    LSM(edited_df)
