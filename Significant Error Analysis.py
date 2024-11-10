@@ -23,16 +23,15 @@ def main():
         # 根据文件类型读取数据
         # 读取数据  
         df = read_file(uploaded_file)
-   
         data = df.values
         data = data[~np.isnan(data)]
-        mean,std_dev = bessel_correction_np(data)
-        print(mean,std_dev)
+       
         criterion = st.selectbox("选择异常检测方法", ["莱伊达准则", "格拉布斯准则", "迪克逊准则"])
         if criterion == "莱伊达准则":
                  outliers,cleaned_data = leyda_criterion(data)
         elif criterion == "格拉布斯准则":
-                 outliers,cleaned_data = grubbs_test(data,alpha=0.05)  # 设置显著性水平
+                 alpha = st.slider('选择显著性水平 (0.01 to 0.10)', 0.01, 0.10, 0.05, step=0.01)
+                 outliers,cleaned_data = grubbs_test(data,alpha)  # 设置显著性水平
         elif criterion == "迪克逊准则":
                  outliers,cleaned_data = dixon_test(data, alpha=0.05)
         
@@ -43,7 +42,8 @@ def main():
 
         fig1,ax1 = plt.subplots()
         plot_function(cleaned_data,[],ax1)
-        
+
+
         #数据格式转换
         cleaned_data = np.array(cleaned_data,dtype=float)
         # pad_arry = np.pad(cleaned_data, (0, 10 - len(cleaned_data) % 10), 'constant', constant_values=(np.nan,))
@@ -72,6 +72,11 @@ def main():
             st.title('Processed data')
             st.dataframe(cleaned_data_df,height=300) 
             st.pyplot(fig1)
-                
+         
+         # 展示数据的统计量
+        statistics = bessel_correction_np(data)
+        stats_cleaned = bessel_correction_np(cleaned_data)
+        st.subheader('数据的统计量')
+        st.write(pd.DataFrame([statistics,stats_cleaned],index=['原始数据','处理后数据']))
 #if __name__ == '__main__':
 main()

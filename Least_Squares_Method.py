@@ -2,14 +2,15 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from scipy.stats import linregress
+import matplotlib.pyplot as plt
 # Streamlit页面标题
 st.title('最小二乘法处理')
 
 # 设置表格的列数
-num_columns = st.number_input('请输入表格的列数（至少为2）:', min_value=2, value=2, step=1)
+num_columns = st.number_input('请输入表格的列数（至少为2）:', min_value=2, value=10, step=1)
 
 # 设置表格的行数
-num_rows = st.number_input('请输入表格的行数（至少为1）:', min_value=1, value=1, step=1)
+num_rows = st.number_input('请输入表格的行数（至少为1）:', min_value=1, value=6, step=1)
 
 # Create column names for DataFrame
 columns = ['Y'] + [f'X{i}' for i in range(1, num_columns)]
@@ -50,23 +51,20 @@ def LSM(edited_df):
         # 确保数据不为空
         if not edited_df.empty:
             try:
+                # 删除空列
+                edited_df = edited_df.dropna(axis=1, how='all')
+                # 删除空行
+                edited_df = edited_df.dropna(axis=0, how='all')
                 # 将数据转换为numpy数组
                 data = edited_df.values.astype(float)  # 确保所有数据都是浮点数类型
-                
+                print(data)
                 # 分离因变量和自变量
                 y = data[:, 0]
                 X = data[:, 1:]
-                print(y)
-                print(X)
+
                 # 执行最小二乘法
                 beta, residuals, rank, s = np.linalg.lstsq(X, y, rcond=None)
                 
-                # 显示结果
-                # st.write('计算结果：')
-                # st.write('参数向量 beta:', beta)
-                # st.write('残差向量 residuals:', residuals)
-                # st.write('矩阵X的秩 rank:', rank)
-                # st.write('奇异值 s:', s)
                 results_df = pd.DataFrame({
                     'Parameter': ['参数向量', '残差', '矩阵的秩', 's'],
                     'Value': [beta, residuals, rank, s]
