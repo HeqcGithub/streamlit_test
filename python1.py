@@ -1,15 +1,20 @@
 ﻿import numpy as np
 from scipy import stats
+import pandas as pd
 #C:\Users\xiaohe\AppData\Roaming\Python\Python39\Scripts   numpy路径
 
 
 def bessel_correction_np(data):
 
-    sample_mean = np.nanmean(data)
-    #ddof表示使用贝塞尔修正
-    sample_std_dev = np.nanstd(data, ddof=1)
-    
-    return sample_mean,sample_std_dev
+    statistics = {
+        'sample_mean': np.nanmean(data),
+        'sample_std_dev': np.nanstd(data, ddof=1),
+        'sample_variance': np.nanvar(data, ddof=1),
+        'median_value': np.nanmedian(data),
+        'min_value': np.nanmin(data),
+        'max_value': np.nanmax(data)
+    }
+    return statistics
 
 
 
@@ -18,7 +23,9 @@ def leyda_criterion(data):
     all_outliers = []
     while True:
         outliers = []
-        mean,std_dev = bessel_correction_np(data)
+        statistics = bessel_correction_np(data)
+        mean=statistics['sample_mean']
+        std_dev=statistics['sample_std_dev']
         for value in data:
             if abs(value - mean) > 3 * std_dev:
                 outliers.append(value)
@@ -37,7 +44,9 @@ def grubbs_test(data,alpha=0.05):
     while True:
         
         n = len(data)
-        mean,std_dev = bessel_correction_np(data)
+        statistics = bessel_correction_np(data)
+        mean=statistics['sample_mean']
+        std_dev=statistics['sample_std_dev']
         g_max = np.abs(np.max(data) - mean) / std_dev
         g_min = np.abs(np.min(data) - mean) / std_dev
         g_calc = max(g_max, g_min)
@@ -86,29 +95,29 @@ def dixon_test(data, alpha=0.05):
         if n<= 7:
             if max10 > critical_value:
                 outliers.append(sorted_data[n-1])
-                print('max10',max22)
+                
             elif min10 > critical_value:
                 outliers.append(sorted_data[0])
-                print('min10',min22)
+                
             else:
                 break
         elif (n>7 and n<=10):
             if max11 > critical_value:
                 outliers.append(sorted_data[n-1])
-                print('max11',max22)
+                
             elif min11 > critical_value:
                 outliers.append(sorted_data[0])
-                print('min11',min22)
+                
             else:
                 break
         elif (n>10 and n<=13):
             print(10,13)
             if max21 > critical_value:
                 outliers.append(sorted_data[n-1])
-                print('max21',max22)
+                
             elif min21 > critical_value:
                 outliers.append(sorted_data[0])
-                print('min21',min22)
+                
             else:
                 break
         elif n>=14:
@@ -116,10 +125,10 @@ def dixon_test(data, alpha=0.05):
             print (max22,min22)
             if max22 > critical_value:
                 outliers.append(sorted_data[n-1])
-                print('max22',max22)
+               
             elif min22 > critical_value:
                 outliers.append(sorted_data[0])
-                print('min22',min22)
+               
             else:
                 break
         data = [value for value in data if value not in outliers]
